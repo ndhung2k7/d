@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Link Bot - Tự động rút gọn link</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Chống kiểm tra phần tử -->
+    <script>
+        // Vô hiệu hóa chuột phải
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Vô hiệu hóa F12, Ctrl+Shift+I, Ctrl+U
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) ||
+                (e.ctrlKey && e.key === 'u') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Phát hiện công cụ dành cho nhà phát triển
+        setInterval(function() {
+            if (window.devtools && window.devtools.isOpen) {
+                window.location.href = 'about:blank';
+            }
+        }, 1000);
+    </script>
+    
+    <div class="app-container">
+        <!-- Thanh bên -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>💬 ChatLinkBot</h2>
+                <p>Tự động rút gọn link</p>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="#" class="menu-item active" data-page="chat">
+                    <span>💬</span> Trò chuyện
+                </a>
+                <a href="#" class="menu-item" data-page="cai-dat">
+                    <span>⚙️</span> Cài đặt
+                </a>
+                <a href="#" class="menu-item" data-page="lich-su">
+                    <span>📜</span> Lịch sử
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="status">
+                    <span class="status-dot"></span>
+                    Đang hoạt động
+                </div>
+            </div>
+        </div>
+        
+        <!-- Nội dung chính -->
+        <div class="main-content">
+            <!-- Trang chat -->
+            <div id="chat-page" class="page active">
+                <div class="chat-header">
+                    <h2>💬 Tin nhắn</h2>
+                    <div class="header-actions">
+                        <button id="clear-chat" class="icon-btn" title="Xóa chat">🗑️</button>
+                    </div>
+                </div>
+                
+                <div id="chat-messages" class="chat-messages">
+                    <div class="message bot">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <div class="message-text">
+                                Chào bạn! 👋<br>
+                                Gửi cho tôi một link, tôi sẽ tự động:<br>
+                                1. Định dạng nội dung<br>
+                                2. Tải lên hastebin<br>
+                                3. Rút gọn qua 3 API (anonlink, linkx, mual)<br><br>
+                                <strong>Hãy thử gửi link ngay!</strong>
+                            </div>
+                            <div class="message-time">Vừa xong</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <div class="input-wrapper">
+                        <input type="text" id="chat-input" placeholder="Nhập link của bạn vào đây... (ví dụ: https://example.com/abc)" />
+                        <button id="send-btn" class="send-btn">
+                            <span>➤</span>
+                        </button>
+                    </div>
+                    <div class="input-hint">
+                        🔗 Hỗ trợ mọi loại link | ⚡ Xử lý tự động
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Trang cài đặt -->
+            <div id="cai-dat-page" class="page">
+                <div class="settings-header">
+                    <h2>⚙️ Cài đặt</h2>
+                    <p>Cấu hình bot theo ý muốn của bạn</p>
+                </div>
+                
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label>📝 Tiêu đề đầu ra</label>
+                        <input type="text" id="setting-title" placeholder="Ví dụ: 📌 LINK ĐÃ ĐƯỢC RÚT GỌN" />
+                        <small>Tiêu đề sẽ hiển thị ở đầu mỗi kết quả</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>📄 Định dạng nội dung</label>
+                        <textarea id="setting-format" rows="3" placeholder="[TIÊU ĐỀ DO NGƯỜI DÙNG CÀI ĐẶT]\n{link}"></textarea>
+                        <small>Sử dụng {link} để chèn link gốc</small>
+                    </div>
+                    
+                    <div class="form-divider">
+                        <h3>🔑 Khóa API</h3>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>🔗 Anonlink API Key</label>
+                        <input type="password" id="setting-anonlink" placeholder="Nhập khóa API của anonlink" />
+                        <small>Đăng ký tại: https://anonlink.co</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>🔗 Linkx API Key</label>
+                        <input type="password" id="setting-linkx" placeholder="Nhập khóa API của linkx" />
+                        <small>Đăng ký tại: https://linkx.me</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>🔗 Mual API Key</label>
+                        <input type="password" id="setting-mual" placeholder="Nhập khóa API của mual" />
+                        <small>Đăng ký tại: https://mual.ink</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>🔐 Hastebin Token</label>
+                        <input type="password" id="setting-hastebin" placeholder="Nhập token hastebin" />
+                        <small>Đăng ký tại: https://hastebin.com</small>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button id="save-settings" class="btn-primary">💾 Lưu cài đặt</button>
+                        <button id="reset-settings" class="btn-secondary">🔄 Đặt lại</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Trang lịch sử -->
+            <div id="lich-su-page" class="page">
+                <div class="history-header">
+                    <h2>📜 Lịch sử trò chuyện</h2>
+                    <button id="clear-history" class="icon-btn">🗑️ Xóa lịch sử</button>
+                </div>
+                <div id="history-list" class="history-list">
+                    <div class="empty-state">
+                        <span>📭</span>
+                        <p>Chưa có lịch sử trò chuyện</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lớp phủ tải -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Đang xử lý link...</p>
+    </div>
+    
+    <!-- Thông báo -->
+    <div id="toast" class="toast"></div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
